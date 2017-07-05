@@ -55,8 +55,8 @@ checking for obstacles:
         # Choose the best action for obstacle
 
 The game have 2 lanes each has 3 routes in which you can drive.
-On game start, each car starts at the center route of its lane 
-The car can pass to other lane, but will be punished for collisions 
+On game start, each car starts at the center route of its lane
+The car can pass to other lane, but will be punished for collisions
 with the lane owner.
 
 <------ Car#1 lane ------><------ Car#2 lane ---->
@@ -74,43 +74,47 @@ with the lane owner.
 |       |       |       |X|       |       |      |
 |       |       |       |X|       |       |      |
 
+For every movement you will initially receive 10 points. Depending on the
+obstacle and your action, you may either gain additional points or loose
+points.
+
 Here are the possible obstacles and the action you should take when hitting
 them:
 
 * obstacles.NONE        there is no obstacle at this position. You can return any
                         action.
-                        Score : 0
+                        Extra score : 0
 
 * obstacles.PENGUIN     return actions.PICKUP and move 1 step forward. You will
                         not move backward if you do not pick up the penguin.
-                        Score : 10 for PICKUP otherwise 0
+                        Extra score : 10 for PICKUP otherwise 0
 
 * obstacles.WATER       return actions.BRAKE if you want to continue forward.
                         return actions.RIGHT or actions.LEFT if you like to
                         bypass the obstacle. Any other action will cause you to
                         move backward.
-                        Score: 4 for BRAKE, 0 for LEFT/RIGHT otherwise -10
+                        Extra score: 4 for BRAKE, 0 for LEFT/RIGHT otherwise -10
 
 * obstacles.CRACK       return actions.JUMP if you want to continue forward
                         return actions.RIGHT or actions.LEFT if you like to
                         bypass the obstacle. Any other action will cause you to
                         move backward.
-                        Score: 5 for JUMP, 0 for LEFT/RIGHT otherwise -10
+                        Extra score: 5 for JUMP, 0 for LEFT/RIGHT otherwise -10
 
 * obstacles.TRASH       you must return actions.RIGHT or actions.LEFT to bypass
                         the obstacle. Any other action will cause you to
                         move backward.
-                        Score: 0 for LEFT/RIGHT otherwise -10
+                        Extra score: 0 for LEFT/RIGHT otherwise -10
 
 * obstacles.BIKE        you must return actions.RIGHT or actions.LEFT to bypass
                         the obstacle. Any other action will cause you to
                         move backward.
-                        Score: 0 for LEFT/RIGHT otherwise -10
+                        Extra score: 0 for LEFT/RIGHT otherwise -10
 
 * obstacles.BARRIER     you must return actions.RIGHT or actions.LEFT to bypass
                         the obstacle. Any other action will cause you to
                         move backward.
-                        Score: 0 for LEFT/RIGHT otherwise -10
+                        Extra score: 0 for LEFT/RIGHT otherwise -10
 
 NOTE : If you are driving out of your lane and have a collision with the lane
        owner, you will punished by -10 points and be moved to other free place.

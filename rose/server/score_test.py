@@ -17,7 +17,8 @@ class SinglePlayerTest(object):
         self.player = player.Player("A", car=0, lane=0)
         self.x = self.player.x
         self.y = self.player.y
-        self.score = self.player.score
+        # we always get 10 points/config.score_move_forward for every step
+        self.score = self.player.score + config.score_move_forward
         self.track.set(self.x, self.y, self.obstacle)
 
     def process(self):
@@ -68,6 +69,7 @@ class TestNoObstacle(SinglePlayerTest):
 
     def test_forward(self):
         for action in FORWARD_ACTIONS:
+            self.setup_method(None)
             self.player.action = action
             self.process()
             self.assert_score(self.score)
@@ -90,7 +92,7 @@ class TestPenguin(SinglePlayerTest):
         # Player move up and get more score
         assert self.player.x == self.x
         assert self.player.y == self.y - 1
-        assert self.player.score == self.score + config.score_move_forward
+        assert self.player.score == self.score + config.score_pickup_penguin
         self.assert_remove_obstacle()
 
     def test_right(self):
@@ -107,6 +109,7 @@ class TestPenguin(SinglePlayerTest):
 
     def test_other(self):
         for action in [a for a in FORWARD_ACTIONS if a != actions.PICKUP]:
+            self.setup_method(None)
             self.player.action = action
             self.process()
             self.assert_score(self.score)
@@ -133,6 +136,7 @@ class MagicActionTest(SinglePlayerTest):
 
     def test_other_action(self):
         for action in [a for a in FORWARD_ACTIONS if a != self.action]:
+            self.setup_method(None)
             self.player.action = action
             self.process()
             self.assert_move_back()
@@ -170,6 +174,7 @@ class TurnTest(SinglePlayerTest):
     Player must turn right or left, or it will move back.
     """
 
+
     def test_right(self):
         self.player.action = actions.RIGHT
         self.process()
@@ -184,6 +189,7 @@ class TurnTest(SinglePlayerTest):
 
     def test_other(self):
         for action in FORWARD_ACTIONS:
+            self.setup_method(None)
             self.player.action = action
             self.process()
             self.assert_move_back()
@@ -225,15 +231,34 @@ class TestLimits(SinglePlayerTest):
         self.assert_keep_obstacle()
 
     def test_forward(self):
-        self.y = self.player.y = 0
+        # set the ypos to 3 as there is a special case for when ypos < 2
+        # i.e. max(2, ypos)
+        self.y = self.player.y = 3
         self.player.action = actions.PICKUP
         self.obstacle = obstacles.PENGUIN
         self.track.set(self.x, self.y, self.obstacle)
         self.process()
         # Player keep position but get more score
+        print self.x, self.y
+        print self.player.x, self.player.y
         assert self.player.x == self.x
-        assert self.player.y == self.y
-        assert self.player.score == self.score + config.score_move_forward
+        assert self.player.y == self.y - 1
+        assert self.player.score == self.score + config.score_pickup_penguin
+        self.assert_remove_obstacle()
+
+    def test_forward_initial(self):
+        # testing for when ypos <= 2, it does not hold the car back
+        self.y = self.player.y = 1
+        self.player.action = actions.PICKUP
+        self.obstacle = obstacles.PENGUIN
+        self.track.set(self.x, self.y, self.obstacle)
+        self.process()
+        # Player keep position but get more score
+        print self.x, self.y
+        print self.player.x, self.player.y
+        assert self.player.x == self.x
+        assert self.player.y == 2 # the car was not held back as the logic is max(2, ypos)
+        assert self.player.score == self.score + config.score_pickup_penguin
         self.assert_remove_obstacle()
 
     def test_back(self):
@@ -243,7 +268,7 @@ class TestLimits(SinglePlayerTest):
         self.obstacle = obstacles.TRASH
         self.track.set(self.x, self.y, self.obstacle)
         self.process()
-        self.assert_score(self.score + config.score_move_backward)
+        self.assert_score(self.score  + config.score_move_backward)
         self.assert_remove_obstacle()
 
 
@@ -283,11 +308,13 @@ class TestCollisions(object):
         # Player 1 win because it is in lane
         assert self.player1.x == 1
         assert self.player1.y == 5
-        assert self.player1.score == self.player1.score
+        assert self.player1.score == config.score_move_forward
         # Player 2 got more score but move back
         assert self.player2.x == 1
         assert self.player2.y == 6
-        assert self.player2.score == 0 + config.score_move_forward + config.score_move_backward
+        assert self.player2.score == config.score_pickup_penguin + \
+                                     config.score_move_forward + \
+                                     config.score_move_backward
 
     def test_after_turn(self):
         # Player 1 in its lane at 2,5
@@ -308,7 +335,7 @@ class TestCollisions(object):
         # Player 2 got more score but move back
         assert self.player2.x == 2
         assert self.player2.y == 6
-        assert self.player2.score == 0 + config.score_move_backward
+        assert self.player2.score == config.score_move_forward + config.score_move_backward
 
     def test_move_left(self):
         # Player 1 in its lane at 1,8
@@ -325,12 +352,12 @@ class TestCollisions(object):
         # Player 1 win because it is in own lane
         assert self.player1.x == 1
         assert self.player1.y == 8
-        assert self.player1.score == 0
+        assert self.player1.score == config.score_move_forward
         # Player 2 moved left, first free cell
         assert self.player2.x == 0
         assert self.player2.y == 8
         # TODO: decrease score?
-        assert self.player2.score == config.score_move_backward
+        assert self.player2.score == config.score_move_forward + config.score_move_backward
 
     def test_move_right(self):
         # Player 1 in its lane at 0,8
@@ -347,9 +374,9 @@ class TestCollisions(object):
         # Player 1 win because it is in own lane
         assert self.player1.x == 0
         assert self.player1.y == 8
-        assert self.player1.score == 0
+        assert self.player1.score == config.score_move_forward
         # Player 2 moved right, no other possible cell
         assert self.player2.x == 1
         assert self.player2.y == 8
         # TODO: decrease score?
-        assert self.player2.score == config.score_move_backward
+        assert self.player2.score == config.score_move_forward + config.score_move_backward

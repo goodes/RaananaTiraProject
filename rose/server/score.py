@@ -37,7 +37,6 @@ def process(players, track):
                 player.score += config.score_move_backward
             else:
                 player.score += config.score_jump
-
         elif obstacle in (obstacles.TRASH,
                           obstacles.BIKE,
                           obstacles.BARRIER):
@@ -55,7 +54,7 @@ def process(players, track):
             if player.action == actions.PICKUP:
                 track.clear(player.x, player.y)
                 player.y -= 1
-                player.score += config.score_move_forward
+                player.score += config.score_pickup_penguin
 
         # Here we can end the game when player gets out of
         # the track bounds. For now, just keep the player at the same

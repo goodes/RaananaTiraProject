@@ -45,22 +45,22 @@ windows_height = (row_height * matrix_height)+dashboard_height
 window_size = windows_width, windows_height
 
 # Files
+res_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../res'))
 
-install_dir = os.path.dirname(__file__)
-obstacles_glob = os.path.join(install_dir, '../res/obstacles/obstacle*.png')
-road_glob = os.path.join(install_dir, '../res/bg/bg*.png')
-cars_dir = os.path.join(install_dir, '../res/cars')
-dashboard_png = os.path.join(install_dir, '../res/dashboard/dashboard.png')
-splash_png = os.path.join(install_dir, '../res/splash/splash_screen.png')
-finish_line_png = os.path.join(install_dir, '../res/end/final_flag.png')
-soundfile = os.path.join(install_dir, '../res/soundtrack/Nyan_Cat.ogg')
+obstacles_glob = os.path.join(res_path, 'obstacles/obstacle*.png')
+road_glob = os.path.join(res_path, 'bg/bg*.png')
+cars_dir = os.path.join(res_path, 'cars')
+dashboard_png = os.path.join(res_path, 'dashboard/dashboard.png')
+splash_png = os.path.join(res_path, 'splash/splash_screen.png')
+finish_line_png = os.path.join(res_path, 'end/final_flag.png')
+soundfile = os.path.join(res_path, 'soundtrack/Nyan_Cat.ogg')
+
 # Player
-
 max_players = 2
 cells_per_player = matrix_width / max_players
 
 # Score Points
-
+score_pickup_penguin = 10
 score_move_forward = 10
 score_move_backward = -10
 score_jump = 5
