@@ -29,11 +29,12 @@ def process(players, track):
 
     for player in sorted_players:
         player.score += config.score_move_forward
+        player.y += 1
         obstacle = track.get(player.x, player.y)
         if obstacle == obstacles.CRACK:
             if player.action != actions.JUMP:
                 track.clear(player.x, player.y)
-                player.y += 1
+                # player.y += 1
                 player.score += config.score_move_backward
             else:
                 player.score += config.score_jump
@@ -41,19 +42,19 @@ def process(players, track):
                           obstacles.BIKE,
                           obstacles.BARRIER):
             track.clear(player.x, player.y)
-            player.y += 1
+            # player.y += 1
             player.score += config.score_move_backward
         elif obstacle == obstacles.WATER:
             if player.action != actions.BRAKE:
                 track.clear(player.x, player.y)
-                player.y += 1
+                # player.y += 1
                 player.score += config.score_move_backward
             else:
                 player.score += config.score_brake
         elif obstacle == obstacles.PENGUIN:
             if player.action == actions.PICKUP:
                 track.clear(player.x, player.y)
-                player.y -= 1
+                # player.y -= 1
                 player.score += config.score_pickup_penguin
 
         # Here we can end the game when player gets out of

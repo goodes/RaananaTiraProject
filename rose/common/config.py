@@ -2,7 +2,7 @@ import os
 
 # Networking
 
-game_port = 8888
+game_port = 8989
 web_port = 8880
 
 # Server
@@ -15,7 +15,7 @@ game_duration = 60
 frame_rate = 30
 number_of_cars = 4
 car_jitter = 10
-play_sound = True
+play_sound = False
 
 # Matrix
 
